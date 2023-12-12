@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import ControlCenter from "@/components/ui/ControlCenter";
 
 export default function Home() {
 	return (
@@ -9,9 +9,7 @@ export default function Home() {
 					We all know there’s too many fonts out there,
 					<br /> so here’s an app that might make your life a bit easier
 				</p>
-				<Button className="mt-5" name="start-button">
-					Enter the danger zone
-				</Button>
+				<ControlCenter />
 			</div>
 		</main>
 	);
