@@ -6,11 +6,13 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import React, { Dispatch } from "react";
+import React, { Dispatch, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Minus, Plus } from "lucide-react";
 import { actionType } from "@/app/page";
 import { CardProps } from "./Card";
+import { setInterval } from "timers/promises";
+import { Input } from "./ui/input";
 
 const Tooltip = ({
 	note,
@@ -31,34 +33,65 @@ const Tooltip = ({
 	);
 };
 
-const ActionButton = ({
-	text,
-	plusType,
-	minusType,
-	dispatch,
-}: {
-	text: string;
-	plusType: actionType;
-	minusType: actionType;
-	dispatch: Dispatch<{ type: actionType; payload?: any }>;
-}) => {
-	return (
-		<div className="border-[1px] rounded-lg border-black bg-white text-black hover:bg-white flex items-center">
-			<Button
-				className="bg-transparent hover:bg-transparent text-black px-2"
-				onClick={() => dispatch({ type: minusType })}>
-				<Minus />
-			</Button>
-			<span className="text-sm font-medium">{text}</span>
-			<Button
-				className="bg-transparent hover:bg-transparent text-black px-2"
-				onClick={() => dispatch({ type: plusType })}
-				onMouseDown={() => dispatch({ type: plusType })}>
-				<Plus />
-			</Button>
-		</div>
-	);
-};
+const ActionButton = React.forwardRef(
+	(
+		{
+			text,
+			plusType,
+			minusType,
+			dispatch,
+			value,
+		}: {
+			text: string | number;
+			plusType: actionType;
+			minusType: actionType;
+			dispatch: Dispatch<{ type: actionType; payload?: any }>;
+			value: number;
+		},
+		ref: React.Ref<HTMLDivElement>
+	) => {
+		const [pressed, press] = useState(false);
+		const intervalIdRef = useRef<any>(null);
+
+		const onHold = (type: actionType) => {
+			if (!pressed) {
+				press(true);
+				intervalIdRef.current = window.setInterval(() => {
+					dispatch({ type });
+				}, 50);
+			}
+		};
+
+		const onStop = () => {
+			if (pressed) {
+				press(false);
+				clearInterval(intervalIdRef.current);
+			}
+		};
+
+		useEffect(() => {
+			return () => clearInterval(intervalIdRef.current);
+		}, []);
+
+		return (
+			<div className="border-[1px] rounded-lg border-black bg-white text-black hover:bg-white flex items-center">
+				<Button
+					className="bg-transparent hover:bg-transparent text-black px-2"
+					onMouseDown={() => onHold(minusType)}
+					onMouseUp={onStop}>
+					<Minus />
+				</Button>
+				<span>{text}</span>
+				<Button
+					className="bg-transparent hover:bg-transparent text-black px-2"
+					onMouseDown={() => onHold(plusType)}
+					onMouseUp={onStop}>
+					<Plus />
+				</Button>
+			</div>
+		);
+	}
+);
 
 const ControlCenter = ({
 	dispatch,
@@ -79,7 +112,8 @@ const ControlCenter = ({
 				<div className="flex flex-col gap-3">
 					<Tooltip note="Edit heading font size">
 						<ActionButton
-							text="Size"
+							text={`${state.hSize}px`}
+							value={state.hSize}
 							plusType="hSize+"
 							minusType="hSize-"
 							dispatch={dispatch}
@@ -95,6 +129,7 @@ const ControlCenter = ({
 					<Tooltip note="Edit heading line-height">
 						<ActionButton
 							text="L-H"
+							value={state.hLH}
 							plusType="hLH+"
 							minusType="hLH-"
 							dispatch={dispatch}
@@ -104,6 +139,7 @@ const ControlCenter = ({
 					<Tooltip note="Edit heading letter-spacing">
 						<ActionButton
 							text="L-H"
+							value={state.hLS}
 							plusType="hLS+"
 							minusType="hLS-"
 							dispatch={dispatch}
@@ -119,6 +155,7 @@ const ControlCenter = ({
 					<Tooltip note="Edit paragraph font size">
 						<ActionButton
 							text="Size"
+							value={state.pSize}
 							plusType="pSize+"
 							minusType="pSize-"
 							dispatch={dispatch}
@@ -134,6 +171,7 @@ const ControlCenter = ({
 					<Tooltip note="Edit paragraph line-height">
 						<ActionButton
 							text="L-H"
+							value={state.pLH}
 							plusType="pLH+"
 							minusType="pLH-"
 							dispatch={dispatch}
@@ -143,6 +181,7 @@ const ControlCenter = ({
 					<Tooltip note="Edit paragraph letter-spacing">
 						<ActionButton
 							text="L-S"
+							value={state.pLS}
 							plusType="pLS+"
 							minusType="pLS-"
 							dispatch={dispatch}

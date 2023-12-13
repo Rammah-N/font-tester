@@ -36,6 +36,7 @@ const reducer = (
 			return { ...state, hSize: state.hSize + 1 };
 		case "hSize-":
 			if (state.hSize - 1 > 0) {
+				console.log("hello");
 				return { ...state, hSize: state.hSize - 1 };
 			}
 			return state;
@@ -142,7 +143,7 @@ export default function Home() {
 
 	return (
 		<main className="flex flex-col" ref={scope}>
-			<div className="text-center mt-20">
+			<div className="text-center mt-10">
 				<h1 className="text-7xl font-bold">The coolest font testing app</h1>
 				<p className="mt-3 text-lg">
 					We all know there’s too many fonts out there,
@@ -160,7 +161,7 @@ export default function Home() {
 							className="absolute top-0">
 							<Input
 								placeholder="Search Google fonts or local fonts"
-								className="search  z-20 w-full text-center border-black"
+								className="search  z-20 w-full text-center border-black bg-transparent"
 							/>
 						</motion.div>
 					)}
