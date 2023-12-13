@@ -4,7 +4,8 @@ import "./globals.css";
 import { Github, Linkedin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-
+import Image from "next/image";
+import logo from "@/public/logo.png";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,13 +20,17 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en">
-			<body
-				className={cn(
-					"min-h-screen flex flex-col justify-between",
-					inter.className
-				)}>
+			<body className={cn("min-h-screen flex flex-col ", inter.className)}>
+				<header className="flex justify-center py-4">
+					<Image
+						src={logo}
+						width={150}
+						height={150}
+						alt="A logo of letter F with different pattern designs embedded in the letter"
+					/>
+				</header>
 				{children}
-				<footer className="flex justify-center py-5 gap-5">
+				<footer className="flex justify-center py-5 gap-5 mt-auto">
 					<Link href="https://github.com/Rammah-N" target="_blank">
 						<Github />
 					</Link>
