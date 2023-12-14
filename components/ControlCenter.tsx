@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import { Minus, Plus } from "lucide-react";
 import { actionType } from "@/app/page";
 import { CardProps } from "./Card";
-import { setInterval } from "timers/promises";
+import { useLongPress } from "use-long-press";
 import { Input } from "./ui/input";
 
 const Tooltip = ({
@@ -40,54 +40,80 @@ const ActionButton = React.forwardRef(
 			plusType,
 			minusType,
 			dispatch,
-			value,
+			title,
 		}: {
 			text: string | number;
 			plusType: actionType;
 			minusType: actionType;
 			dispatch: Dispatch<{ type: actionType; payload?: any }>;
-			value: number;
+			title?: string;
 		},
 		ref: React.Ref<HTMLDivElement>
 	) => {
 		const [pressed, press] = useState(false);
+		const [dispatching, setStartDispatching] = useState(false);
+		const [type, setType] = useState<actionType | null>(null);
 		const intervalIdRef = useRef<any>(null);
 
-		const onHold = (type: actionType) => {
-			if (!pressed) {
-				press(true);
-				intervalIdRef.current = window.setInterval(() => {
-					dispatch({ type });
-				}, 50);
+		const plusBind = useLongPress(
+			() => {
+				setType(plusType);
+			},
+			{
+				onStart: () => {
+					setType(plusType);
+					setStartDispatching(true);
+				},
+				onFinish: () => {
+					setType(null);
+					setStartDispatching(false);
+				},
+				threshold: 20,
 			}
-		};
-
-		const onStop = () => {
-			if (pressed) {
-				press(false);
-				clearInterval(intervalIdRef.current);
+		);
+		const minusBind = useLongPress(
+			() => {
+				setType(minusType);
+			},
+			{
+				onStart: () => {
+					setType(minusType);
+					setStartDispatching(true);
+				},
+				onFinish: () => {
+					setType(null);
+					setStartDispatching(false);
+				},
+				threshold: 20,
 			}
-		};
-
+		);
 		useEffect(() => {
+			if (dispatching && type) {
+				intervalIdRef.current = window.setInterval(() => {
+					dispatch({ type: type as actionType });
+				}, 80);
+			}
 			return () => clearInterval(intervalIdRef.current);
-		}, []);
+		}, [dispatching, type]);
 
 		return (
-			<div className="border-[1px] rounded-lg border-black bg-white text-black hover:bg-white flex items-center">
-				<Button
-					className="bg-transparent hover:bg-transparent text-black px-2"
-					onMouseDown={() => onHold(minusType)}
-					onMouseUp={onStop}>
-					<Minus />
-				</Button>
-				<span>{text}</span>
-				<Button
-					className="bg-transparent hover:bg-transparent text-black px-2"
-					onMouseDown={() => onHold(plusType)}
-					onMouseUp={onStop}>
-					<Plus />
-				</Button>
+			<div>
+				<span className="text-sm">{title}</span>
+				<div
+					className="border-[1px] rounded-lg border-black bg-white text-black hover:bg-white flex items-center justify-between"
+					ref={ref}>
+					<Button
+						className="bg-transparent hover:bg-transparent text-black px-2"
+						{...minusBind("minus")}>
+						<Minus size={15} />
+					</Button>
+					<span>{text}</span>
+					<Button
+						className="bg-transparent hover:bg-transparent text-black px-2"
+						{...plusBind("plus")}>
+						<Plus size={15} />
+					</Button>
+				</div>
 			</div>
 		);
 	}
@@ -101,50 +127,51 @@ const ControlCenter = ({
 	state: CardProps;
 }) => {
 	return (
-		<motion.div
-			initial={{ opacity: 0, right: -50 }}
-			transition={{ duration: 500, ease: "easeInOut" }}
-			className="control-center absolute top-1/2 right-5 -translate-y-1/2 border-[2px] border-black p-5 bg-white rounded-xl shadow-lg">
+		<>
 			<div className="text-center">
 				<h1 className="mb-3">
 					<strong>{`<h1 />`}</strong>
 				</h1>
 				<div className="flex flex-col gap-3">
-					<Tooltip note="Edit heading font size">
-						<ActionButton
-							text={`${state.hSize}px`}
-							value={state.hSize}
-							plusType="hSize+"
-							minusType="hSize-"
-							dispatch={dispatch}
+					<ActionButton
+						text={`${state.hSize}px`}
+						plusType="hSize+"
+						minusType="hSize-"
+						dispatch={dispatch}
+						title="font size"
+					/>
+					<ActionButton
+						text={`${state.hWeight}`}
+						plusType="hWeight+"
+						minusType="hWeight-"
+						dispatch={dispatch}
+						title="font weight"
+					/>
+					<div className="flex flex-col">
+						<span className="text-sm">color</span>
+						<Input
+							type="color"
+							onChange={(e) =>
+								dispatch({ type: "hColor", payload: e.target.value })
+							}
 						/>
-					</Tooltip>
+					</div>
 
-					<Tooltip note="Edit heading background color">
-						<Button className="border-[1px] border-black bg-white text-black hover:bg-white">
-							BG
-						</Button>
-					</Tooltip>
+					<ActionButton
+						text={state.hLH.toFixed(1)}
+						plusType="hLH+"
+						minusType="hLH-"
+						dispatch={dispatch}
+						title="line height"
+					/>
 
-					<Tooltip note="Edit heading line-height">
-						<ActionButton
-							text="L-H"
-							value={state.hLH}
-							plusType="hLH+"
-							minusType="hLH-"
-							dispatch={dispatch}
-						/>
-					</Tooltip>
-
-					<Tooltip note="Edit heading letter-spacing">
-						<ActionButton
-							text="L-H"
-							value={state.hLS}
-							plusType="hLS+"
-							minusType="hLS-"
-							dispatch={dispatch}
-						/>
-					</Tooltip>
+					<ActionButton
+						text={state.hLS + "px"}
+						plusType="hLS+"
+						minusType="hLS-"
+						dispatch={dispatch}
+						title="letter spacing"
+					/>
 				</div>
 			</div>
 			<div className="text-center mt-5">
@@ -152,44 +179,48 @@ const ControlCenter = ({
 					<strong>{`<p />`}</strong>
 				</h1>
 				<div className="flex flex-col gap-3">
-					<Tooltip note="Edit paragraph font size">
-						<ActionButton
-							text="Size"
-							value={state.pSize}
-							plusType="pSize+"
-							minusType="pSize-"
-							dispatch={dispatch}
+					<ActionButton
+						text={`${state.pSize}px`}
+						plusType="pSize+"
+						minusType="pSize-"
+						dispatch={dispatch}
+						title="font size"
+					/>
+					<ActionButton
+						text={`${state.pWeight}`}
+						plusType="pWeight+"
+						minusType="pWeight-"
+						dispatch={dispatch}
+						title="font weight"
+					/>
+					<div className="flex flex-col">
+						<span className="text-sm">color</span>
+						<Input
+							type="color"
+							onChange={(e) =>
+								dispatch({ type: "pColor", payload: e.target.value })
+							}
 						/>
-					</Tooltip>
+					</div>
 
-					<Tooltip note="Edit paragraph background color">
-						<Button className="border-[1px] border-black bg-white text-black hover:bg-white">
-							BG
-						</Button>
-					</Tooltip>
+					<ActionButton
+						text={state.pLH.toFixed(1)}
+						plusType="pLH+"
+						minusType="pLH-"
+						dispatch={dispatch}
+						title="line height"
+					/>
 
-					<Tooltip note="Edit paragraph line-height">
-						<ActionButton
-							text="L-H"
-							value={state.pLH}
-							plusType="pLH+"
-							minusType="pLH-"
-							dispatch={dispatch}
-						/>
-					</Tooltip>
-
-					<Tooltip note="Edit paragraph letter-spacing">
-						<ActionButton
-							text="L-S"
-							value={state.pLS}
-							plusType="pLS+"
-							minusType="pLS-"
-							dispatch={dispatch}
-						/>
-					</Tooltip>
+					<ActionButton
+						text={state.pLS + "px"}
+						plusType="pLS+"
+						minusType="pLS-"
+						dispatch={dispatch}
+						title="letter spacing"
+					/>
 				</div>
 			</div>
-		</motion.div>
+		</>
 	);
 };
 

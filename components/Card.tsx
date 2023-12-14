@@ -4,40 +4,56 @@ import React from "react";
 type mixed = number;
 
 export interface CardProps {
+	bg: string;
 	hSize: number;
 	hWeight: number;
-	hBG: string;
+	hColor: string;
 	hLH: number;
 	hLS: number;
 	pSize: number;
 	pWeight: number;
-	pBG: string;
+	pColor: string;
 	pLH: number;
 	pLS: number;
+	font?: string;
 }
 
 const Card = (props: CardProps) => {
-	const { hSize, hWeight, hBG, hLH, hLS, pSize, pWeight, pBG, pLH, pLS } =
-		props;
+	const {
+		bg,
+		hSize,
+		hWeight,
+		hColor,
+		hLH,
+		hLS,
+		pSize,
+		pWeight,
+		pColor,
+		pLH,
+		pLS,
+		font,
+	} = props;
 
 	const hStyle = {
 		fontSize: `${hSize}px`,
+		color: hColor,
 		fontWeight: hWeight,
-		backgroundColor: hBG,
 		lineHeight: hLH,
 		letterSpacing: hLS,
 	};
 
 	const pStyle = {
 		fontSize: `${pSize}px`,
+		color: pColor,
 		fontWeight: pWeight,
-		backgroundColor: pBG,
 		lineHeight: pLH,
 		letterSpacing: pLS,
 	};
 
 	return (
-		<li className="rounded-md p-5 shadow-md w-full flex flex-col gap-3 min-w-fit max-w-fit">
+		<li
+			className="rounded-md p-5 shadow-md w-full flex flex-col gap-3 min-w-fit max-w-fit"
+			style={{ backgroundColor: bg, fontFamily: font }}>
 			<h1
 				className={cn("text-2xl font-bold whitespace-nowrap leading-none")}
 				style={hStyle}>

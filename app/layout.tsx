@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "@/public/logo.png";
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: "Font Tester",
@@ -39,8 +38,17 @@ export default function RootLayout({
 					href="/favicon-16x16.png"
 				/>
 				<link rel="manifest" href="/site.webmanifest" />
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link
+					rel="preconnect"
+					href="https://fonts.gstatic.com"
+					crossOrigin=""
+				/>
+				<link
+					href="https://fonts.googleapis.com/css2?family=Eater&family=Fira+Code:wght@300;400;500;600;700&family=Gasoek+One&family=Monofett&family=Pixelify+Sans:wght@700&display=swap"
+					rel="stylesheet"></link>
 			</head>
-			<body className={cn("min-h-screen flex flex-col ", inter.className)}>
+			<body className={cn("min-h-screen flex flex-col ")}>
 				<header className="flex justify-center py-4">
 					<Image
 						src={logo}
