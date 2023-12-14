@@ -13,7 +13,6 @@ import {
 import { motion } from "framer-motion";
 import { Inter } from "next/font/google";
 import { useEffect, useReducer, useRef, useState } from "react";
-import WebFontLoader from "webfontloader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -69,7 +68,6 @@ const reducer = (
 			return { ...state, hColor: action.payload };
 
 		case "hLH+":
-			console.log(state.hLH);
 			return { ...state, hLH: state.hLH + 0.1 };
 		case "hLH-":
 			if (state.hLH - 0.1 > 0) {
@@ -146,6 +144,7 @@ export default function Home() {
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const [scope, animate] = useAnimate();
 	const [families, setFamilies] = useState(["Inter"]);
+	const [selectedFamilies, setSelectedFamilies] = useState(["Inter"]);
 	const [shown, show] = useState(true);
 	const [clearMode, setClearMode] = useState(false);
 	const init = () => {
@@ -153,15 +152,40 @@ export default function Home() {
 	};
 
 	useEffect(() => {
-		WebFontLoader.load({ google: { families } });
-	}, [families]);
+		const fetchGoogleFonts = async () => {
+			try {
+				const response = await fetch(
+					`https://www.googleapis.com/webfonts/v1/webfonts?key=${process.env.NEXT_PUBLIC_KEY}`
+				);
+				const data = await response.json();
+				console.log(data);
+				// Extract font families from the data and update your state
+				const fontFamilies = data.items.map((font: any) => font.family);
+				// Update your state with the fetched font families
+				// (you might want to show these in your dropdown or whatever UI you have)
+				setFamilies(fontFamilies);
+			} catch (error) {
+				console.error("Error fetching Google Fonts:", error);
+			}
+		};
+
+		fetchGoogleFonts();
+	}, []);
+
+	useEffect(() => {
+		// webfontloader uses window object on import, so needs to be initialized after render
+		if (typeof window !== "undefined") {
+			const fontLoader = require("webfontloader");
+			fontLoader.load({ google: { families: selectedFamilies } });
+		}
+	}, [selectedFamilies]);
 
 	return (
 		<main className="flex flex-col" ref={scope}>
 			<LayoutGroup>
 				{!shown && (
 					<motion.div
-						initial={{ y: 0 }} // Initial position
+						initial={{ y: 0 }}
 						animate={{ y: [0, -5, 0] }} // Bouncing animation
 						transition={{ repeat: 10, duration: 0.5 }}
 						className="flex justify-center absolute top-10 right-10 clear">
@@ -179,18 +203,15 @@ export default function Home() {
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
 							className={cn("text-center mt-10", inter.className)}>
-							<AnimatePresence>
-								<motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }}>
-									<h1 className="text-7xl font-bold">
-										The simplest font testing app
-									</h1>
-									<p className="mt-3 text-lg">
-										We all know there’s too many fonts out there,
-										<br /> so here’s an app that might make your life a bit
-										easier
-									</p>
-								</motion.div>
-							</AnimatePresence>
+							<motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }}>
+								<h1 className="text-7xl font-bold px-4">
+									The simplest font testing app
+								</h1>
+								<p className="mt-3 text-lg">
+									We all know there’s too many fonts out there,
+									<br /> so here’s an app that might make your life a bit easier
+								</p>
+							</motion.div>
 							<div className="flex justify-center mt-5 h-[40px] relative">
 								{!shown && (
 									<motion.div
@@ -208,48 +229,42 @@ export default function Home() {
 										/>
 									</motion.div>
 								)}
-								<AnimatePresence>
-									{shown && (
-										<motion.div
-											initial={{ opacity: 1, maxWidth: "auto" }}
-											exit={{ opacity: 0, maxWidth: 0 }}>
-											<Button className="start z-10" onClick={init}>
-												Start Testing
-											</Button>
-										</motion.div>
-									)}
-								</AnimatePresence>
+								{shown && (
+									<motion.div
+										initial={{ opacity: 1, maxWidth: "auto" }}
+										exit={{ opacity: 0, maxWidth: 0 }}>
+										<Button className="start z-10" onClick={init}>
+											Start Testing
+										</Button>
+									</motion.div>
+								)}
 							</div>
-							<AnimatePresence>
-								{!shown && (
-									<motion.div
-										initial={{ opacity: 0, left: -50 }}
-										animate={{
-											opacity: 1,
-											left: 5,
-										}}
-										className="control-center fixed top-1/2 left-2 -translate-y-1/2 border-[2px] border-black p-5 bg-white rounded-xl shadow-lg scale-75">
-										<ControlCenter dispatch={dispatch} state={state} />
-									</motion.div>
-								)}
-							</AnimatePresence>
-							<AnimatePresence>
-								{!shown && (
-									<motion.div
-										initial={{ opacity: 0 }}
-										animate={{ opacity: 1 }}
-										className="flex items-center flex-col my-5">
-										<span>Background Color</span>
-										<Input
-											type="color"
-											className="w-[100px]"
-											onChange={(e) =>
-												dispatch({ type: "bg", payload: e.target.value })
-											}
-										/>
-									</motion.div>
-								)}
-							</AnimatePresence>
+							{!shown && (
+								<motion.div
+									initial={{ opacity: 0, left: -50 }}
+									animate={{
+										opacity: 1,
+										left: 5,
+									}}
+									className="control-center fixed top-1/2 left-2 -translate-y-1/2 border-[2px] border-black p-5 bg-white rounded-xl shadow-lg scale-75">
+									<ControlCenter dispatch={dispatch} state={state} />
+								</motion.div>
+							)}
+							{!shown && (
+								<motion.div
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									className="flex items-center flex-col my-5">
+									<span>Background Color</span>
+									<Input
+										type="color"
+										className="w-[100px]"
+										onChange={(e) =>
+											dispatch({ type: "bg", payload: e.target.value })
+										}
+									/>
+								</motion.div>
+							)}
 						</motion.div>
 					)}
 				</AnimatePresence>
@@ -258,12 +273,12 @@ export default function Home() {
 					layout="position"
 					className="list flex flex-wrap w-full gap-5 justify-center mt-10 px-10">
 					<AnimatePresence>
-						{families.map((font, i) =>
+						{selectedFamilies.map((font, i) =>
 							!shown ? (
 								<motion.div
 									className="inline max-w-fit"
 									style={{ flex: "1 1 25%" }}
-									key={i}
+									key={font}
 									initial={{ opacity: 0, y: 100 }}
 									animate={{ opacity: 1, y: 0 }}>
 									<Card {...state} font={font} />

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Github, Linkedin } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -38,15 +37,6 @@ export default function RootLayout({
 					href="/favicon-16x16.png"
 				/>
 				<link rel="manifest" href="/site.webmanifest" />
-				<link rel="preconnect" href="https://fonts.googleapis.com" />
-				<link
-					rel="preconnect"
-					href="https://fonts.gstatic.com"
-					crossOrigin=""
-				/>
-				<link
-					href="https://fonts.googleapis.com/css2?family=Eater&family=Fira+Code:wght@300;400;500;600;700&family=Gasoek+One&family=Monofett&family=Pixelify+Sans:wght@700&display=swap"
-					rel="stylesheet"></link>
 			</head>
 			<body className={cn("min-h-screen flex flex-col ")}>
 				<header className="flex justify-center py-4">
