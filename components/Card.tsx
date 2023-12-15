@@ -1,22 +1,9 @@
+import { CardProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import React from "react";
 
 type mixed = number;
 
-export interface CardProps {
-	bg: string;
-	hSize: number;
-	hWeight: number;
-	hColor: string;
-	hLH: number;
-	hLS: number;
-	pSize: number;
-	pWeight: number;
-	pColor: string;
-	pLH: number;
-	pLS: number;
-	font?: { family: string; variants: Array<string> };
-}
 
 const Card = (props: CardProps) => {
 	const {

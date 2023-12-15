@@ -1,5 +1,5 @@
 "use client";
-import Card, { CardProps } from "@/components/Card";
+import Card from "@/components/Card";
 import ControlCenter from "@/components/ControlCenter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,41 +8,13 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence, LayoutGroup, useAnimate } from "framer-motion";
 import { motion } from "framer-motion";
 import { Inter } from "next/font/google";
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { FixedSizeList as List } from "react-window";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { differenceWith, isEqual, unionBy } from "lodash";
 import { Eye } from "lucide-react";
+import { actionType, CardProps, Family } from "@/lib/types";
 
 const inter = Inter({ subsets: ["latin"] });
-
-type Family = { family: string; variants: Array<string> };
-
-export type actionType =
-	| "bg"
-	| "hSize+"
-	| "hSize-"
-	| "hWeight+"
-	| "hWeight-"
-	| "hColor"
-	| "hLH+"
-	| "hLH-"
-	| "hLS+"
-	| "hLS-"
-	| "pSize+"
-	| "pSize-"
-	| "pWeight+"
-	| "pWeight-"
-	| "pColor"
-	| "pLH+"
-	| "pLH-"
-	| "pLS+"
-	| "pLS-";
 
 const reducer = (
 	state: CardProps,
@@ -149,7 +121,6 @@ const initialState = {
 
 export default function Home() {
 	const [state, dispatch] = useReducer(reducer, initialState);
-	const [scope, animate] = useAnimate();
 
 	const [families, setFamilies] = useState<Array<Family>>([
 		{
@@ -173,7 +144,6 @@ export default function Home() {
 	const [clearMode, setClearMode] = useState(false);
 
 	let hoverTimeoutId: any = null;
-
 
 	const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value.toLowerCase();
@@ -279,153 +249,152 @@ export default function Home() {
 	};
 
 	return (
-		<TooltipProvider>
-			<main className="flex flex-col" ref={scope}>
-				<LayoutGroup>
-					{shown && (
+		<main className="flex flex-col">
+			<LayoutGroup>
+				{shown && (
+					<motion.div
+						initial={{ y: 0 }}
+						animate={{ y: [0, -5, 0] }} // Bouncing animation
+						transition={{ repeat: 10, duration: 0.5 }}
+						className="flex justify-center absolute top-10 right-10 clear">
+						<Button
+							variant="link"
+							onClick={() => setClearMode((prev) => !prev)}>
+							{clearMode ? "show" : "hide"} stuff
+						</Button>
+					</motion.div>
+				)}
+				<AnimatePresence>
+					{!clearMode && (
 						<motion.div
-							initial={{ y: 0 }}
-							animate={{ y: [0, -5, 0] }} // Bouncing animation
-							transition={{ repeat: 10, duration: 0.5 }}
-							className="flex justify-center absolute top-10 right-10 clear">
-							<Button
-								variant="link"
-								onClick={() => setClearMode((prev) => !prev)}>
-								{clearMode ? "show" : "hide"} stuff
-							</Button>
-						</motion.div>
-					)}
-					<AnimatePresence>
-						{!clearMode && (
-							<motion.div
-								initial={{ opacity: 1 }}
-								animate={{ opacity: 1 }}
-								exit={{ opacity: 0 }}
-								className={cn("text-center", inter.className)}>
-								<motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }}>
-									<h1 className="text-7xl font-bold px-4">
-										The simplest font testing app
-									</h1>
-									<p className="mt-3 text-lg">
-										We all know there’s too many fonts out there,
-										<br /> so here’s an app that might make your life a bit
-										easier
-									</p>
-								</motion.div>
-								<div className="flex justify-center mt-5 h-[40px] relative">
-									{shown && (
-										<motion.div
-											initial={{ width: 120, maxWidth: 120, opacity: 0 }}
-											animate={{
-												opacity: 1,
-												maxWidth: 300,
-												width: 300,
-											}}
-											exit={{ width: 120, maxWidth: 120, opacity: 0 }}
-											className="absolute top-0">
-											<Input
-												type="text"
-												name="search"
-												placeholder="Search Google fonts or local fonts"
-												className="search z-20 w-full text-center border-black bg-transparent"
-												value={query}
-												onChange={onSearch}
-												autoComplete="off"
-											/>
-											{hoveredFont && (
-												<motion.div
-													initial={{ opacity: 0 }}
-													animate={{ opacity: 1 }}
-													exit={{ opacity: 0 }}
-													className="absolute top-0 w-fit -right-full p-4 rounded-md shadow-md z-[100] bg-[#faf9f6]">
-													<p
-														style={{
-															fontFamily: hoveredFont?.family || "Inter",
-															whiteSpace: "nowrap",
-														}}>
-														The quick brown fox jumps over the lazy dog
-													</p>
-												</motion.div>
-											)}
-											{searchResults.length > 0 && query && (
-												<motion.ul
-													initial={{ opacity: 0 }}
-													animate={{ opacity: 1 }}
-													exit={{ opacity: 0 }}
-													className="w-full shadow-md rounded-md bg-[#faf9f6] p-3 z-50 border-black border-[1px] mt-2 relative">
-													<List
-														className="w-full max-h-[200px] min-h-[100px]"
-														height={searchResults.length * 10}
-														width="auto"
-														itemData={searchResults}
-														itemCount={searchResults.length}
-														itemSize={40}>
-														{Row}
-													</List>
-												</motion.ul>
-											)}
-										</motion.div>
-									)}
-									{!shown && (
-										<motion.div
-											initial={{ opacity: 1, maxWidth: "auto" }}
-											exit={{ opacity: 0, maxWidth: 0 }}>
-											<Button className="start z-10" onClick={() => show(true)}>
-												Start Testing
-											</Button>
-										</motion.div>
-									)}
-								</div>
+							initial={{ opacity: 1 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							className={cn("text-center", inter.className)}>
+							<motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }}>
+								<h1 className="text-7xl font-bold px-4">
+									The simplest font testing app
+								</h1>
+								<p className="mt-3 text-lg">
+									We all know there’s too many fonts out there,
+									<br /> so here’s an app that might make your life a bit easier
+								</p>
+							</motion.div>
+							<div className="flex justify-center mt-5 h-[40px] relative">
 								{shown && (
 									<motion.div
-										initial={{ opacity: 0, left: -50 }}
+										initial={{ width: 120, maxWidth: 120, opacity: 0 }}
 										animate={{
 											opacity: 1,
-											left: 5,
+											maxWidth: 300,
+											width: 300,
 										}}
-										className="control-center fixed top-1/2 left-2 -translate-y-1/2 border-[2px] border-black p-5 bg-white rounded-xl shadow-lg scale-75">
-										<ControlCenter dispatch={dispatch} state={state} />
-									</motion.div>
-								)}
-								{shown && (
-									<motion.div
-										initial={{ opacity: 0 }}
-										animate={{ opacity: 1 }}
-										className="flex items-center flex-col my-5">
-										<span>Background Color</span>
+										exit={{ width: 120, maxWidth: 120, opacity: 0 }}
+										className="absolute top-0">
 										<Input
-											type="color"
-											className="w-[100px]"
-											onChange={(e) =>
-												dispatch({ type: "bg", payload: e.target.value })
-											}
+											type="text"
+											name="search"
+											placeholder="Search Google fonts"
+											className="search z-20 w-full text-center border-black bg-transparent"
+											value={query}
+											onChange={onSearch}
+											autoComplete="off"
 										/>
+										{hoveredFont && (
+											<motion.div
+												initial={{ opacity: 0 }}
+												animate={{ opacity: 1 }}
+												exit={{ opacity: 0 }}
+												className="absolute top-0 w-fit -right-full p-4 rounded-md shadow-md z-[100] bg-[#faf9f6]">
+												<p
+													style={{
+														fontFamily: hoveredFont?.family || "Inter",
+														whiteSpace: "nowrap",
+													}}>
+													The quick brown fox jumps over the lazy dog
+												</p>
+											</motion.div>
+										)}
+										{searchResults.length > 0 && query && (
+											<motion.ul
+												initial={{ opacity: 0 }}
+												animate={{ opacity: 1 }}
+												exit={{ opacity: 0 }}
+												className="w-full shadow-md rounded-md bg-[#faf9f6] p-3 z-50 border-black border-[1px] mt-2 relative">
+												<List
+													className="w-full max-h-[200px] min-h-[100px]"
+													height={searchResults.length * 10}
+													width="auto"
+													itemData={searchResults}
+													itemCount={searchResults.length}
+													itemSize={40}>
+													{Row}
+												</List>
+											</motion.ul>
+										)}
 									</motion.div>
 								)}
-							</motion.div>
+								{!shown && (
+									<motion.div
+										initial={{ opacity: 1, maxWidth: "auto" }}
+										exit={{ opacity: 0, maxWidth: 0 }}>
+										<Button className="start z-10" onClick={() => show(true)}>
+											Start Testing
+										</Button>
+									</motion.div>
+								)}
+							</div>
+							{shown && (
+								<motion.div
+									initial={{ opacity: 0, left: -50 }}
+									animate={{
+										opacity: 1,
+										left: 5,
+									}}
+									className="control-center fixed top-1/2 left-2 -translate-y-1/2 border-[2px] border-black p-5 bg-white rounded-xl shadow-lg scale-75">
+									<ControlCenter dispatch={dispatch} state={state} />
+								</motion.div>
+							)}
+							{shown && (
+								<motion.div
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									exit={{ opacity: 0 }}
+									className="flex items-center flex-col my-5 -z-1">
+									<span>Background Color</span>
+									<Input
+										type="color"
+										className="w-[100px]"
+										onChange={(e) =>
+											dispatch({ type: "bg", payload: e.target.value })
+										}
+										value={state.bg}
+									/>
+								</motion.div>
+							)}
+						</motion.div>
+					)}
+				</AnimatePresence>
+
+				<motion.ul
+					layout="position"
+					className="list flex flex-wrap w-full gap-5 justify-center mt-10 px-10">
+					<AnimatePresence>
+						{selectedFamilies.map((font, i) =>
+							shown ? (
+								<motion.div
+									className="inline max-w-fit"
+									style={{ flex: "1 1 25%" }}
+									key={font.family}
+									initial={{ opacity: 0, y: 100 }}
+									animate={{ opacity: 1, y: 0 }}>
+									<Card {...state} font={font} />
+								</motion.div>
+							) : null
 						)}
 					</AnimatePresence>
-
-					<motion.ul
-						layout="position"
-						className="list flex flex-wrap w-full gap-5 justify-center mt-10 px-10">
-						<AnimatePresence>
-							{selectedFamilies.map((font, i) =>
-								shown ? (
-									<motion.div
-										className="inline max-w-fit"
-										style={{ flex: "1 1 25%" }}
-										key={font.family}
-										initial={{ opacity: 0, y: 100 }}
-										animate={{ opacity: 1, y: 0 }}>
-										<Card {...state} font={font} />
-									</motion.div>
-								) : null
-							)}
-						</AnimatePresence>
-					</motion.ul>
-				</LayoutGroup>
-			</main>
-		</TooltipProvider>
+				</motion.ul>
+			</LayoutGroup>
+		</main>
 	);
 }

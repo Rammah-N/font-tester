@@ -9,10 +9,9 @@ import {
 import React, { Dispatch, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Minus, Plus } from "lucide-react";
-import { actionType } from "@/app/page";
-import { CardProps } from "./Card";
 import { useLongPress } from "use-long-press";
 import { Input } from "./ui/input";
+import { CardProps, actionType } from "@/lib/types";
 
 const Tooltip = ({
 	note,
