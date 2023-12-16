@@ -23,6 +23,7 @@ export type actionType =
 
 export interface CardProps {
 	bg: string;
+	heading?: string;
 	hSize: number;
 	hWeight: number;
 	hColor: string;

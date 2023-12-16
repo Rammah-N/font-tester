@@ -126,7 +126,7 @@ const ControlCenter = ({
 	state: CardProps;
 }) => {
 	return (
-		<>
+		<div>
 			<div className="text-center">
 				<h1 className="mb-3">
 					<strong>{`<h1 />`}</strong>
@@ -219,7 +219,7 @@ const ControlCenter = ({
 					/>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 

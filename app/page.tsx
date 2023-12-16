@@ -75,6 +75,7 @@ const reducer = (
 const initialState = {
 	hSize: 32,
 	bg: "#ffffff",
+	heading: "I honestly couldn't come up with a title",
 	hColor: "#000",
 	hWeight: 700,
 	hLH: 1,
@@ -89,37 +90,31 @@ const initialState = {
 export default function Home() {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	const [families, setFamilies] = useState<Array<Family>>([
-		{
-			family: "Inter",
-			variants: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-		},
-	]);
-	const [selectedFamilies, setSelectedFamilies] = useState<Array<Family>>([
-		{
-			family: "Inter",
-			variants: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-		},
-	]);
+	const [families, setFamilies] = useState<Array<Family>>([]);
+	const [selectedFamilies, setSelectedFamilies] = useState<Array<Family>>([]);
+
 	const [loadedFonts, setLoadedFonts] = useState<Array<Family>>([]);
 	const [hoveredFont, setHoveredFont] = useState<Family | null>(null);
 
 	const [query, setQuery] = useState("");
-	const [searchResults, setResults] = useState<Array<Family>>([]);
+	const [searchResults, setResults] = useState<Array<Family> | null>(null);
 
 	const [shown, show] = useState(false);
 	const [clearMode, setClearMode] = useState(false);
-
+	const [showResults, setShowResults] = useState(false);
+	const [isHovering, setIsHovering] = useState(false);
 	let hoverTimeoutId: any = null;
 
 	const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value.toLowerCase();
 		if (value) {
+			setShowResults(true);
 			setQuery(value);
 			setResults(
 				families.filter((item) => item.family.toLowerCase().includes(value))
 			);
 		} else {
+			setShowResults(false);
 			setQuery("");
 		}
 	};
@@ -129,19 +124,24 @@ export default function Home() {
 	};
 
 	const previewFont = (font: Family) => {
-		hoverTimeoutId = window.setTimeout(async () => {
+		if (!isHovering) {
+			setIsHovering(true);
 			const exists = checkIsLoaded(font);
 			if (!exists) {
-				const fontLoader = require("webfontloader");
-				await fontLoader.load({
-					google: {
-						families: [font.family + ":" + font.variants.join(",")],
-					},
-				});
-				setLoadedFonts((prev) => [...prev, font]);
+				hoverTimeoutId = window.setTimeout(async () => {
+					const fontLoader = require("webfontloader");
+					await fontLoader.load({
+						google: {
+							families: [font.family + ":" + font.variants.join(",")],
+						},
+					});
+					setLoadedFonts((prev) => [...prev, font]);
+					setHoveredFont(font);
+				}, 2000);
+			} else {
+				setHoveredFont(font);
 			}
-			setHoveredFont(font);
-		}, 1000);
+		}
 	};
 
 	const addFont = (font: Family) => {
@@ -164,7 +164,7 @@ export default function Home() {
 				}));
 				setFamilies(fontFamilies);
 			} catch (error) {
-				console.error("Error fetching Google Fonts:", error);
+				alert("Error fetching Google fonts, please refresh");
 			}
 		};
 
@@ -205,8 +205,9 @@ export default function Home() {
 				<Eye
 					className="cursor-pointer mr-4"
 					size={15}
-					onMouseOver={() => previewFont(data[index])}
-					onMouseOut={() => {
+					onMouseEnter={() => previewFont(data[index])}
+					onMouseLeave={() => {
+						setIsHovering(false);
 						setHoveredFont(null);
 						window.clearTimeout(hoverTimeoutId);
 					}}
@@ -214,9 +215,16 @@ export default function Home() {
 			</li>
 		);
 	};
-
 	return (
 		<>
+			{showResults && (
+				<div
+					className="absolute top-0 left-0 bottom-0 right-0 z-[100]"
+					onClick={() => {
+						setShowResults(false);
+						setIsHovering(false);
+					}}></div>
+			)}
 			<motion.main
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
@@ -232,19 +240,21 @@ export default function Home() {
 			</motion.main>
 			<main className="flex-col hidden md:flex">
 				<LayoutGroup>
-					{shown && (
-						<motion.div
-							initial={{ y: 0 }}
-							animate={{ y: [0, -5, 0] }} // Bouncing animation
-							transition={{ repeat: 10, duration: 0.5 }}
-							className="flex justify-center absolute top-10 right-10 clear">
-							<Button
-								variant="link"
-								onClick={() => setClearMode((prev) => !prev)}>
-								{clearMode ? "show" : "hide"} stuff
-							</Button>
-						</motion.div>
-					)}
+					<AnimatePresence>
+						{shown && selectedFamilies.length > 0 && (
+							<motion.div
+								initial={{ y: 0 }}
+								animate={{ y: [0, -5, 0] }} // Bouncing animation
+								transition={{ repeat: 10, duration: 0.5 }}
+								className="flex justify-center absolute top-10 right-10 clear">
+								<Button
+									variant="link"
+									onClick={() => setClearMode((prev) => !prev)}>
+									{clearMode ? "show" : "hide"} stuff
+								</Button>
+							</motion.div>
+						)}
+					</AnimatePresence>
 					<AnimatePresence>
 						{!clearMode && (
 							<motion.div
@@ -277,17 +287,18 @@ export default function Home() {
 												type="text"
 												name="search"
 												placeholder="Search Google fonts"
-												className="search z-20 w-full text-center border-black bg-transparent"
+												className="search z-[200] w-full text-center border-black bg-transparent"
 												value={query}
 												onChange={onSearch}
 												autoComplete="off"
+												autoFocus
 											/>
-											{hoveredFont && (
+											{hoveredFont && isHovering && (
 												<motion.div
 													initial={{ opacity: 0 }}
 													animate={{ opacity: 1 }}
 													exit={{ opacity: 0 }}
-													className="absolute top-0 w-fit -right-full p-4 rounded-md shadow-md z-[100] bg-[#faf9f6]">
+													className="absolute top-0 w-fit -right-full p-4 rounded-md shadow-md z-[300] bg-[#faf9f6]">
 													<p
 														style={{
 															fontFamily: hoveredFont?.family || "Inter",
@@ -297,21 +308,25 @@ export default function Home() {
 													</p>
 												</motion.div>
 											)}
-											{searchResults.length > 0 && query && (
+											{searchResults && query && showResults && (
 												<motion.ul
 													initial={{ opacity: 0 }}
 													animate={{ opacity: 1 }}
 													exit={{ opacity: 0 }}
-													className="w-full shadow-md rounded-md bg-[#faf9f6] p-3 z-50 border-black border-[1px] mt-2 relative">
-													<List
-														className="w-full max-h-[200px] min-h-[100px]"
-														height={searchResults.length * 10}
-														width="auto"
-														itemData={searchResults}
-														itemCount={searchResults.length}
-														itemSize={40}>
-														{Row}
-													</List>
+													className="w-full shadow-md rounded-md bg-[#faf9f6] p-3 z-[200] border-black border-[1px] mt-2 relative">
+													{searchResults.length > 0 ? (
+														<List
+															className="w-full max-h-[200px] min-h-[100px]"
+															height={searchResults.length * 10}
+															width="auto"
+															itemData={searchResults}
+															itemCount={searchResults.length}
+															itemSize={40}>
+															{Row}
+														</List>
+													) : (
+														<p>No fonts found</p>
+													)}
 												</motion.ul>
 											)}
 										</motion.div>
@@ -333,8 +348,13 @@ export default function Home() {
 											opacity: 1,
 											left: 5,
 										}}
-										className="control-center fixed top-1/2 left-2 -translate-y-1/2 border-[2px] border-black p-5 bg-white rounded-xl shadow-lg scale-75">
-										<ControlCenter dispatch={dispatch} state={state} />
+										className="fixed top-1/2 left-2 -translate-y-1/2">
+										<motion.div className="control-center border-[2px] border-black p-5 bg-white rounded-xl shadow-lg scale-75">
+											<ControlCenter dispatch={dispatch} state={state} />
+										</motion.div>
+										<button className="border-2 border-black text-black fixed bottom-0 left-0 text-lg">
+											hide
+										</button>
 									</motion.div>
 								)}
 								{shown && (
@@ -360,13 +380,15 @@ export default function Home() {
 
 					<motion.ul
 						layout="position"
-						className="list flex flex-wrap w-full gap-5 justify-center mt-10 px-10">
+						className="list w-full gap-5 justify-center items-center place-content-center place-items-center mt-10 px-10 grid"
+						style={{
+							gridTemplateColumns: "repeat(auto-fit, minmax(500px,500px))",
+						}}>
 						<AnimatePresence>
 							{selectedFamilies.map((font, i) =>
 								shown ? (
 									<motion.div
-										className="inline max-w-fit"
-										style={{ flex: "1 1 25%" }}
+										className="flex justify-center mx-auto w-full"
 										key={font.family}
 										initial={{ opacity: 0, y: 100 }}
 										animate={{ opacity: 1, y: 0 }}>

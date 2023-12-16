@@ -42,8 +42,8 @@ export default function RootLayout({
 				<header className="flex justify-center py-4">
 					<Image
 						src={logo}
-						width={150}
-						height={150}
+						width={100}
+						height={100}
 						alt="A logo of letter F with different pattern designs embedded in the letter"
 					/>
 				</header>

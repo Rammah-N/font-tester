@@ -4,7 +4,6 @@ import React from "react";
 
 type mixed = number;
 
-
 const Card = (props: CardProps) => {
 	const {
 		bg,
@@ -19,6 +18,7 @@ const Card = (props: CardProps) => {
 		pLH,
 		pLS,
 		font,
+		heading,
 	} = props;
 	const hStyle = {
 		fontSize: `${hSize}px`,
@@ -40,14 +40,17 @@ const Card = (props: CardProps) => {
 
 	return (
 		<div className="w-full">
-			<span>{font?.family}</span>
+			<span>
+				{font?.family} - {font?.variants.length} font style
+				{font?.variants.length && font?.variants.length > 1 ? "s" : null}
+			</span>
 			<li
-				className="rounded-md p-5 shadow-md w-full flex flex-col gap-3 min-w-fit max-w-fit"
+				className="card rounded-md p-5 shadow-md flex flex-col gap-3 w-full overflow-auto max-h-[500px] max-w-[600px]"
 				style={{ backgroundColor: bg, fontFamily: font?.family }}>
 				<h1
 					className={cn("text-2xl font-bold whitespace-nowrap leading-none")}
 					style={hStyle}>
-					I honestly couldn't <br /> come up with a title{" "}
+					{heading}
 				</h1>
 				<p className="mt-2 whitespace-nowrap" style={pStyle}>
 					Aye, fight and you may die. <br /> Run and you'll live -- at least a
