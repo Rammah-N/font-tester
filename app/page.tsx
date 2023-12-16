@@ -352,9 +352,6 @@ export default function Home() {
 										<motion.div className="control-center border-[2px] border-black p-5 bg-white rounded-xl shadow-lg scale-75">
 											<ControlCenter dispatch={dispatch} state={state} />
 										</motion.div>
-										<button className="border-2 border-black text-black fixed bottom-0 left-0 text-lg">
-											hide
-										</button>
 									</motion.div>
 								)}
 								{shown && (
