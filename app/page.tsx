@@ -38,7 +38,7 @@ const reducer = (
 		case "pSize-":
 		case "hLS-":
 		case "pLS-":
-			if ((value as number) - 1 > 0) {
+			if ((value as number) - 1 >= 0) {
 				return { ...state, [key]: (value as number) - 1 };
 			}
 			return state;
@@ -62,7 +62,7 @@ const reducer = (
 
 		case "hLH-":
 		case "pLH-":
-			if ((value as number) - 0.1 > 0) {
+			if ((value as number) - 0.1 >= 0) {
 				return { ...state, [key]: (value as number) - 0.1 };
 			}
 			return state;
@@ -75,7 +75,6 @@ const reducer = (
 const initialState = {
 	hSize: 32,
 	bg: "#ffffff",
-	heading: "I honestly couldn't come up with a title",
 	hColor: "#000",
 	hWeight: 700,
 	hLH: 1,
@@ -377,15 +376,14 @@ export default function Home() {
 
 					<motion.ul
 						layout="position"
-						className="list w-full gap-5 justify-center items-center place-content-center place-items-center mt-10 px-10 grid"
-						style={{
-							gridTemplateColumns: "repeat(auto-fit, minmax(500px,500px))",
-						}}>
+						className="flex flex-wrap list w-full gap-5 justify-center items-center mt-10 px-10"
+						>
 						<AnimatePresence>
 							{selectedFamilies.map((font, i) =>
 								shown ? (
 									<motion.div
-										className="flex justify-center mx-auto w-full"
+										className="flex justify-center mx-auto w-fit max-w-[1000px]"
+										style={{ flex: "1 1 25%" }}
 										key={font.family}
 										initial={{ opacity: 0, y: 100 }}
 										animate={{ opacity: 1, y: 0 }}>

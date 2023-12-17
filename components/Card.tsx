@@ -18,7 +18,6 @@ const Card = (props: CardProps) => {
 		pLH,
 		pLS,
 		font,
-		heading,
 	} = props;
 	const hStyle = {
 		fontSize: `${hSize}px`,
@@ -39,18 +38,20 @@ const Card = (props: CardProps) => {
 	};
 
 	return (
-		<div className="w-full">
+		<div className="w-fit max-w-full mx-auto">
 			<span>
 				{font?.family} - {font?.variants.length} font style
 				{font?.variants.length && font?.variants.length > 1 ? "s" : null}
 			</span>
 			<li
-				className="card rounded-md p-5 shadow-md flex flex-col gap-3 w-full overflow-auto max-h-[500px] max-w-[600px]"
+				className="card rounded-md p-5 shadow-md flex flex-col gap-3 w-fit overflow-auto max-h-[500px] max-w-full"
 				style={{ backgroundColor: bg, fontFamily: font?.family }}>
 				<h1
-					className={cn("text-2xl font-bold whitespace-nowrap leading-none")}
+					className={cn(
+						"text-2xl font-bold whitespace-nowrap leading-none pr-2"
+					)}
 					style={hStyle}>
-					{heading}
+					I honestly couldn't <br /> come up with a title
 				</h1>
 				<p className="mt-2 whitespace-nowrap" style={pStyle}>
 					Aye, fight and you may die. <br /> Run and you'll live -- at least a
