@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "@/public/logo.png";
 import { Analytics } from "@vercel/analytics/react";
-
+import { SpeedInsights } from "@vercel/speed-insights/next";
 export const metadata: Metadata = {
 	title: "Font Tester",
 	description: "An app to test different fonts",
@@ -58,6 +58,7 @@ export default function RootLayout({
 					</Link>
 				</footer>
 				<Analytics />
+				<SpeedInsights />
 			</body>
 		</html>
 	);
