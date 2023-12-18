@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "@/public/logo.png";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
 	title: "Font Tester",
@@ -56,6 +57,7 @@ export default function RootLayout({
 						<Linkedin />
 					</Link>
 				</footer>
+				<Analytics />
 			</body>
 		</html>
 	);
