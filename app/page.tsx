@@ -228,13 +228,20 @@ export default function Home() {
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				className="text-center md:hidden">
-				<h1 className="text-7xl font-bold px-4">
+				<h1 className="text-4xl md:text-7xl font-bold px-4">
 					The simplest font testing app
 				</h1>
-				<p className="mt-5 text-lg">
+				<p className="mt-5 text-lg px-4 hidden md:block">
 					We all know there’s too many fonts out there,
 					<br /> so here’s an app that might make your life a bit easier <br />
 					that unfortunately only works on desktops <i>(for now)</i>
+				</p>
+				<p className="mt-5 text-lg px-4  md:hidden">
+					We all know there’s too many fonts out there, so here’s an app that
+					might make your life a bit easier{" "}
+					<strong>
+						that unfortunately only works on desktops <i>(for now)</i>
+					</strong>
 				</p>
 			</motion.main>
 			<main className="flex-col hidden md:flex">
@@ -376,8 +383,7 @@ export default function Home() {
 
 					<motion.ul
 						layout="position"
-						className="flex flex-wrap list w-full gap-5 justify-center items-center mt-10 px-10"
-						>
+						className="flex flex-wrap list w-full gap-5 justify-center items-center mt-10 px-10">
 						<AnimatePresence>
 							{selectedFamilies.map((font, i) =>
 								shown ? (
