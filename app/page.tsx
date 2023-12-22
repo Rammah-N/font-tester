@@ -13,6 +13,8 @@ import { FixedSizeList as List } from "react-window";
 import { differenceWith, isEqual, unionBy } from "lodash";
 import { Check, Eye, Loader2 } from "lucide-react";
 import { actionType, CardProps, Family } from "@/lib/types";
+import { useTheme } from "next-themes";
+import ThemeToggle from "@/components/Toggle";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -102,6 +104,7 @@ export default function Home() {
 	const [clearMode, setClearMode] = useState(false);
 	const [showResults, setShowResults] = useState(false);
 	const [isPreviewing, setIsPreviewing] = useState(false);
+	const { setTheme } = useTheme();
 	let hoverTimeoutId: any = null;
 
 	const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -233,6 +236,8 @@ export default function Home() {
 					}}></div>
 			)}
 
+			<ThemeToggle />
+
 			<main className="flex flex-col">
 				<LayoutGroup>
 					<AnimatePresence>
@@ -286,7 +291,7 @@ export default function Home() {
 												type="text"
 												name="search"
 												placeholder="Search Google fonts"
-												className="search z-[300] relative w-full text-center border-black bg-transparent"
+												className="search z-[300] relative w-full text-center border-primary bg-transparent"
 												value={query}
 												onChange={onSearch}
 												autoComplete="off"
@@ -299,7 +304,7 @@ export default function Home() {
 														initial={{ opacity: 0 }}
 														animate={{ opacity: 1 }}
 														exit={{ opacity: 0 }}
-														className="w-full shadow-md rounded-md bg-[#faf9f6] p-3 z-[200] border-black border-[1px] mt-2 relative">
+														className="w-full shadow-md rounded-md bg-[#faf9f6] p-3 z-[200] border-primary border-[1px] mt-2 relative">
 														{searchResults.length > 0 ? (
 															<List
 																className="w-full max-h-[200px] min-h-[100px]"

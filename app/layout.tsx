@@ -8,6 +8,8 @@ import logo from "@/public/logo.png";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter } from "next/font/google";
+import { ThemeProvider } from "@/components/ui/theme-provider";
+import { Button } from "@/components/ui/button";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -49,24 +51,29 @@ export default function RootLayout({
 			<body
 				className={cn("flex flex-col", inter.className)}
 				style={{ minHeight: "100dvh" }}>
-				<header className="flex justify-center py-4">
-					<Image
-						src={logo}
-						width={100}
-						height={100}
-						alt="A logo of letter F with different pattern designs embedded in the letter"
-					/>
-				</header>
-				{children}
-				<div id="control-center"></div>
-				<footer className="flex justify-center py-5 gap-5 mt-auto">
-					<Link href="https://github.com/Rammah-N" target="_blank">
-						<Github />
-					</Link>
-					<Link href="https://linkedin.com/in/rammah-mohammed" target="_blank">
-						<Linkedin />
-					</Link>
-				</footer>
+				<ThemeProvider>
+					<header className="flex justify-center py-4">
+						<Image
+							src={logo}
+							width={100}
+							height={100}
+							alt="A logo of letter F with different pattern designs embedded in the letter"
+						/>
+					</header>
+					{children}
+					<div id="control-center"></div>
+					<footer className="flex justify-center py-5 gap-5 mt-auto">
+						<Link href="https://github.com/Rammah-N" target="_blank">
+							<Github />
+						</Link>
+						<Link
+							href="https://linkedin.com/in/rammah-mohammed"
+							target="_blank">
+							<Linkedin />
+						</Link>
+					</footer>
+				</ThemeProvider>
+
 				<Analytics />
 				<SpeedInsights />
 			</body>

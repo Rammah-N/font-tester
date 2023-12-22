@@ -166,9 +166,9 @@ const ControlCenter = ({
 		  };
 
 	const mobileClasses =
-		"fixed w-screen bottom-0 flex items-center justify-between control-center border-t-[1px] border-black p-5 bg-white shadow-lg rounded-t-xl";
+		"fixed w-screen bottom-0 flex items-center justify-between control-center border-t-[1px] border-black p-5 dark:text-black bg-white shadow-lg rounded-t-xl";
 	const desktopClasses =
-		"fixed top-1/2 left-2 -translate-y-1/2 control-center border-[2px] border-black p-5 bg-white rounded-xl shadow-lg scale-75";
+		"fixed top-1/2 left-2 -translate-y-1/2 control-center border-[2px] border-black p-5 dark:text-black bg-white rounded-xl shadow-lg scale-75";
 
 	if (!windowSize.width) {
 		return null;
