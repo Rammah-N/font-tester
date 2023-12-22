@@ -77,6 +77,7 @@
 
 body {
 	background-color: #faf9f6;
+	overflow-x: hidden;
 }
 html {
 	scrollbar-gutter: stable;
@@ -87,10 +88,10 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-	background-color: #f1f1f1; /* Background color of the track */
+	background-color: #faf9f6; /* Background color of the track */
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: gray; /* Color of the scrollbar itself */
+	background-color: #cecaca; /* Color of the scrollbar itself */
 	border-radius: 3px; /* Rounded corners for the scrollbar */
 }

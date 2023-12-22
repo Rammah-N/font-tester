@@ -7,6 +7,10 @@ import Image from "next/image";
 import logo from "@/public/logo.png";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
+
 export const metadata: Metadata = {
 	title: "Font Tester",
 	description: "An app to test different fonts",
@@ -19,6 +23,9 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en">
+			<meta
+				name="viewport"
+				content="width=device-width, initial-scale=1.0"></meta>
 			<head>
 				<link
 					rel="apple-touch-icon"
@@ -39,7 +46,9 @@ export default function RootLayout({
 				/>
 				<link rel="manifest" href="/site.webmanifest" />
 			</head>
-			<body className={cn("min-h-screen flex flex-col ")}>
+			<body
+				className={cn("flex flex-col", inter.className)}
+				style={{ minHeight: "100dvh" }}>
 				<header className="flex justify-center py-4">
 					<Image
 						src={logo}
@@ -49,6 +58,7 @@ export default function RootLayout({
 					/>
 				</header>
 				{children}
+				<div id="control-center"></div>
 				<footer className="flex justify-center py-5 gap-5 mt-auto">
 					<Link href="https://github.com/Rammah-N" target="_blank">
 						<Github />
