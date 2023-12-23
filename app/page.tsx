@@ -15,6 +15,7 @@ import { Check, Eye, Loader2 } from "lucide-react";
 import { actionType, CardProps, Family } from "@/lib/types";
 import { useTheme } from "next-themes";
 import ThemeToggle from "@/components/Toggle";
+import { Switch } from "@radix-ui/react-switch";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -76,14 +77,14 @@ const reducer = (
 
 const initialState = {
 	hSize: 32,
-	bg: "#ffffff",
-	hColor: "#000",
+	bg: "",
+	hColor: "",
 	hWeight: 700,
 	hLH: 1,
 	hLS: 0,
 	pSize: 16,
 	pWeight: 400,
-	pColor: "#000",
+	pColor: "",
 	pLH: 1.5,
 	pLS: 0,
 };
@@ -236,24 +237,24 @@ export default function Home() {
 					}}></div>
 			)}
 
-			<ThemeToggle />
-
 			<main className="flex flex-col">
 				<LayoutGroup>
 					<AnimatePresence>
-						{shown && selectedFamilies.length > 0 && (
-							<motion.div
-								initial={{ y: 0 }}
-								animate={{ y: [0, -5, 0] }} // Bouncing animation
-								transition={{ repeat: 10, duration: 0.5 }}
-								className="flex justify-center absolute top-10 right-10 clear">
-								<Button
-									variant="link"
-									onClick={() => setClearMode((prev) => !prev)}>
-									{clearMode ? "show" : "hide"} stuff
-								</Button>
-							</motion.div>
-						)}
+						<div className="flex justify-center items-center gap-3 absolute top-10 right-10 clear">
+							{shown && selectedFamilies.length > 0 && (
+								<motion.div
+									initial={{ y: 0 }}
+									animate={{ y: [0, -5, 0] }} // Bouncing animation
+									transition={{ repeat: 10, duration: 0.5 }}>
+									<Button
+										variant="link"
+										onClick={() => setClearMode((prev) => !prev)}>
+										{clearMode ? "show" : "hide"} stuff
+									</Button>
+								</motion.div>
+							)}
+							<ThemeToggle />
+						</div>
 					</AnimatePresence>
 					<AnimatePresence>
 						{!clearMode && (
@@ -304,7 +305,7 @@ export default function Home() {
 														initial={{ opacity: 0 }}
 														animate={{ opacity: 1 }}
 														exit={{ opacity: 0 }}
-														className="w-full shadow-md rounded-md bg-[#faf9f6] p-3 z-[200] border-primary border-[1px] mt-2 relative">
+														className="w-full shadow-md rounded-md bg-[#faf9f6] dark:bg-background p-3 z-[200] border-primary border-[1px] mt-2 relative">
 														{searchResults.length > 0 ? (
 															<List
 																className="w-full max-h-[200px] min-h-[100px]"
@@ -327,7 +328,7 @@ export default function Home() {
 														initial={{ opacity: 0 }}
 														animate={{ opacity: 1 }}
 														exit={{ opacity: 0 }}
-														className="w-full z-[9999] relative px-2 py-4 mt-2 rounded-md shadow-md bg-[#faf9f6] overflow-x-auto">
+														className="w-full z-[9999] relative px-2 py-4 mt-2 rounded-md shadow-md bg-background text-primary overflow-x-auto">
 														{hoveredFont ? (
 															<p
 																style={{

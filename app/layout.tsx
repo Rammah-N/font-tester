@@ -25,10 +25,10 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en">
-			<meta
-				name="viewport"
-				content="width=device-width, initial-scale=1.0"></meta>
 			<head>
+				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1.0"></meta>
 				<link
 					rel="apple-touch-icon"
 					sizes="180x180"
@@ -51,7 +51,11 @@ export default function RootLayout({
 			<body
 				className={cn("flex flex-col", inter.className)}
 				style={{ minHeight: "100dvh" }}>
-				<ThemeProvider>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="light"
+					enableSystem
+					disableTransitionOnChange>
 					<header className="flex justify-center py-4">
 						<Image
 							src={logo}

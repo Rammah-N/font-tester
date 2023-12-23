@@ -98,17 +98,17 @@ const ActionButton = React.forwardRef(
 			<div className="text-center">
 				<span className="text-sm">{title}</span>
 				<div
-					className="border-[1px] rounded-lg border-black bg-white text-black hover:bg-white flex items-center justify-between"
+					className="border-[1px] rounded-lg border-primary bg-background text-primary flex items-center justify-between"
 					ref={ref}>
 					{(windowSize.width as number) > 768 ? (
 						<Button
-							className="bg-transparent hover:bg-transparent text-black px-2"
+							className="bg-transparent hover:bg-transparent text-primary px-2"
 							{...minusBind}>
 							<Minus size={15} />
 						</Button>
 					) : (
 						<Button
-							className="bg-transparent hover:bg-transparent text-black px-2"
+							className="bg-transparent hover:bg-transparent text-primary px-2"
 							onTouchStart={minusBind.onTouchStart}
 							onTouchEnd={minusBind.onTouchEnd}>
 							<Minus size={15} />
@@ -117,13 +117,13 @@ const ActionButton = React.forwardRef(
 					<span className="w-full text-center">{text}</span>
 					{(windowSize.width as number) > 768 ? (
 						<Button
-							className="bg-transparent hover:bg-transparent text-black px-2"
+							className="bg-transparent hover:bg-transparent text-primary px-2"
 							{...plusBind}>
 							<Plus size={15} />
 						</Button>
 					) : (
 						<Button
-							className="bg-transparent hover:bg-transparent text-black px-2"
+							className="bg-transparent hover:bg-transparent text-primary px-2"
 							onTouchStart={plusBind.onTouchStart}
 							onTouchEnd={plusBind.onTouchEnd}>
 							<Plus size={15} />
@@ -166,9 +166,9 @@ const ControlCenter = ({
 		  };
 
 	const mobileClasses =
-		"fixed w-screen bottom-0 flex items-center justify-between control-center border-t-[1px] border-black p-5 dark:text-black bg-white shadow-lg rounded-t-xl";
+		"fixed w-screen dark:text-primary bg-white dark:bg-background bottom-0 flex items-center justify-between control-center border-t-[1px] border-primary p-5 dark:text-black bg-primary shadow-lg rounded-t-xl";
 	const desktopClasses =
-		"fixed top-1/2 left-2 -translate-y-1/2 control-center border-[2px] border-black p-5 dark:text-black bg-white rounded-xl shadow-lg scale-75";
+		"fixed bg-primary dark:text-primary bg-white dark:bg-background top-1/2 left-2 -translate-y-1/2 control-center border-[2px] border-primary p-5 dark:text-black bg rounded-xl shadow-lg scale-75";
 
 	if (!windowSize.width) {
 		return null;
@@ -182,7 +182,7 @@ const ControlCenter = ({
 			className={isMobile ? mobileClasses : desktopClasses}>
 			{!isMobile ? (
 				<>
-					<div className="text-center">
+					<div className="text-center text-primary">
 						<h1 className="mb-3">
 							<strong>{`<h1 />`}</strong>
 						</h1>
@@ -226,7 +226,7 @@ const ControlCenter = ({
 							/>
 						</div>
 					</div>
-					<div className=" text-center md:mt-5">
+					<div className=" text-center md:mt-5 text-primary">
 						<h1 className="md:mb-3">
 							<strong>{`<p />`}</strong>
 						</h1>
@@ -279,9 +279,9 @@ const ControlCenter = ({
 						<DropdownMenuTrigger asChild>
 							<Button
 								variant="outline"
-								className="px-10 border-black">{`<h1 />`}</Button>
+								className="px-10 border-primary">{`<h1 />`}</Button>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent className="px-4 pb-2">
+						<DropdownMenuContent className="px-4 pb-2 border-primary">
 							<DropdownMenuLabel>Heading styles</DropdownMenuLabel>
 							<DropdownMenuSeparator />
 							<div className="flex flex-col gap-2">
@@ -329,7 +329,7 @@ const ControlCenter = ({
 						<DropdownMenuTrigger asChild>
 							<Button
 								variant="outline"
-								className="px-10 border-black">{`<p />`}</Button>
+								className="px-10 border-primary">{`<p />`}</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent className="px-4 pb-2">
 							<DropdownMenuLabel>Paragraph styles</DropdownMenuLabel>

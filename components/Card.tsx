@@ -44,11 +44,11 @@ const Card = (props: CardProps) => {
 				{font?.variants.length && font?.variants.length > 1 ? "s" : null}
 			</span>
 			<li
-				className="card rounded-md p-5 shadow-md flex flex-col gap-3 w-fit overflow-auto max-h-[500px] max-w-full"
+				className="card rounded-md p-5 shadow-md flex flex-col gap-3 w-fit overflow-auto max-h-[500px] max-w-full bg-background dark:border-foreground dark:border-[1px]"
 				style={{ backgroundColor: bg, fontFamily: font?.family }}>
 				<h1
 					className={cn(
-						"text-2xl font-bold whitespace-nowrap leading-none pr-2"
+						"text-2xl font-bold whitespace-nowrap leading-none pr-2 text-primary"
 					)}
 					style={hStyle}>
 					I honestly couldn't <br /> come up with a title
