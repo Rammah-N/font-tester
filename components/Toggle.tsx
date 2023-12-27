@@ -1,24 +1,16 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import {
-	Cloud,
-	CloudSun,
-	Moon,
-	Sparkles,
-	Star,
-	Sun,
-	Sunrise,
-} from "lucide-react";
+import { useTheme } from "next-themes";
+import { AnimatePresence, motion } from "framer-motion";
+import { CloudSun, Moon, Sparkles, Sun } from "lucide-react";
+
+
 import { Switch } from "./ui/switch";
 
 const ThemeToggle = () => {
 	const { setTheme, theme } = useTheme();
 	const [isChecked, setC] = useState(false);
 	const [showAnimation, setShowAnimation] = useState(false);
-	let timeoutId: any = null;
+	let timeoutId: NodeJS.Timeout;
 	useEffect(() => {
 		if (showAnimation) {
 			timeoutId = setTimeout(() => {
@@ -38,7 +30,7 @@ const ThemeToggle = () => {
 			/>
 			<Switch
 				className="w-[60px]"
-				onCheckedChange={(e) => {
+				onCheckedChange={() => {
 					setTheme(theme === "dark" ? "light" : "dark");
 					setShowAnimation(true);
 					setC((prev) => !prev);
